@@ -180,7 +180,21 @@
   	color: var(--bg);
         background-color: var(--text);
 }
+.loading {
+    filter: blur(10px);
+    opacity: 0.6;
+    transition: filter 0.5s ease, opacity 0.5s ease;
+}
 
+.loaded {
+    filter: blur(0px);
+    opacity: 1;
+    transition: filter 0.5s ease, opacity 0.5s ease;
+}
+
+.article-img {
+    transition: filter 0.5s ease;
+}
 
         @media (max-width: 768px) {
             body { padding: 40px 20px 80px 20px; justify-content: flex-start; }
@@ -189,12 +203,12 @@
             .image-container { width: 160px; }
             .display-title { font-size: 2.6rem; }
             
-.side-footer {
-    position: fixed;
-    left: 20px;
-    top: 50%;
-    transform: translateX(-50%);
-}
+            .side-footer {
+            position: static;
+            transform: none;
+            margin-top: 100px;
+            justify-content: center;
+                }
             }
         }
     </style>
@@ -248,17 +262,26 @@ const title = document.getElementById('r-title');
 const subtitle = document.getElementById('r-subtitle');
 const link = document.getElementById('r-link');
 
-
+box.classList.add("loading");
 title.textContent = "LOADING...";
 subtitle.textContent = "syncing archive...";
-box.style.opacity = 1;
+
+function setLoaded() {
+    box.classList.remove("loading");
+    box.classList.add("loaded");
+}
+
+function setLoading() {
+    box.classList.remove("loaded");
+    box.classList.add("loading");
+}
 
 
 function loadData(idx) {
 
     if (!positions.length) return;
 
-    box.style.opacity = 0;
+    setLoading();
 
     setTimeout(() => {
 
@@ -274,40 +297,34 @@ function loadData(idx) {
             img.style.display = "none";
         }
 
-        box.style.opacity = 1;
+        setLoaded();
 
-    }, 60);
+    }, 80);
 }
 
 
 function nextArticle() {
-
     if (!positions.length) return;
-
     index = (index + 1) % positions.length;
     loadData(index);
 }
 
 function prevArticle() {
-
     if (!positions.length) return;
-
     index = (index - 1 + positions.length) % positions.length;
     loadData(index);
 }
 
+
+
 function startAutoPlay() {
-
     clearInterval(timer);
-
     timer = setInterval(() => {
-
-        if (positions.length > 1) {
-            nextArticle();
-        }
-
+        if (positions.length > 1) nextArticle();
     }, 6000);
 }
+
+
 
 document.getElementById('btn-next').addEventListener('click', () => {
     nextArticle();
@@ -319,10 +336,11 @@ document.getElementById('btn-prev').addEventListener('click', () => {
     startAutoPlay();
 });
 
+
+
 link.addEventListener('click', (e) => {
 
     e.preventDefault();
-
     if (!positions.length) return;
 
     const article = positions[index];
@@ -336,29 +354,24 @@ ${article.subtitle || ""}
 
 ${article.content || ""}`;
 
-    const blob = new Blob(
-        [content],
-        { type: "text/plain;charset=utf-8" }
-    );
-
+    const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
 
     window.open(url, "_blank");
 });
 
 
+
 fetch(SHEET_URL)
-    .then(response => response.json())
+    .then(res => res.json())
     .then(data => {
 
         positions = data;
 
         if (!positions.length) {
-
             title.textContent = "NO ENTRIES";
             subtitle.textContent = "No articles available.";
-            box.style.opacity = 1;
-
+            setLoaded();
             return;
         }
 
@@ -371,18 +384,18 @@ fetch(SHEET_URL)
             img.src = positions[0].image;
         }
 
-        box.style.opacity = 1;
-
+        setLoaded();
         startAutoPlay();
-    })
-    .catch(error => {
 
-        console.error(error);
+    })
+    .catch(err => {
+
+        console.error(err);
 
         title.textContent = "CONNECTION ERROR";
         subtitle.textContent = "Unable to load entries.";
-        box.style.opacity = 1;
 
+        setLoaded();
     });
 
 </script>
