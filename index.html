@@ -320,9 +320,10 @@ const subtitle = document.getElementById('r-subtitle');
 const author = document.getElementById('r-author');
 const link = document.getElementById('r-link');
 
+/* ---------------- LOADING STATE ---------------- */
+
 box.classList.add("loading");
 title.textContent = "LOADING...";
-author.textContent = "By who?";
 subtitle.textContent = "syncing archive...";
 
 function setLoaded() {
@@ -335,6 +336,7 @@ function setLoading() {
     box.classList.add("loading");
 }
 
+/* ---------------- LOAD ARTICLE ---------------- */
 
 function loadData(idx) {
 
@@ -345,10 +347,13 @@ function loadData(idx) {
     setTimeout(() => {
 
         const item = positions[idx];
+
         title.textContent = item.title || "";
+
         author.textContent = item.author
             ? `BY: ${item.author}`
             : "";
+
         subtitle.textContent = item.subtitle || "";
 
         if (item.image) {
@@ -363,6 +368,7 @@ function loadData(idx) {
     }, 80);
 }
 
+/* ---------------- NAV ---------------- */
 
 function nextArticle() {
     if (!positions.length) return;
@@ -376,7 +382,7 @@ function prevArticle() {
     loadData(index);
 }
 
-
+/* ---------------- AUTOPLAY ---------------- */
 
 function startAutoPlay() {
     clearInterval(timer);
@@ -385,7 +391,7 @@ function startAutoPlay() {
     }, 6000);
 }
 
-
+/* ---------------- EVENTS ---------------- */
 
 document.getElementById('btn-next').addEventListener('click', () => {
     nextArticle();
@@ -397,7 +403,7 @@ document.getElementById('btn-prev').addEventListener('click', () => {
     startAutoPlay();
 });
 
-
+/* ---------------- TXT VIEWER ---------------- */
 
 link.addEventListener('click', (e) => {
 
@@ -428,7 +434,7 @@ ${article.content || ""}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Rights of the article: ${article.author || ""}
-      
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`;
 
     const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
@@ -437,15 +443,111 @@ Rights of the article: ${article.author || ""}
     window.open(url, "_blank");
 });
 
+/* ---------------- LOG (FIXED + SAFE) ---------------- */
 
+document.getElementById('log-link').addEventListener('click', (e) => {
+
+    e.preventDefault();
+
+    if (!positions.length) return;
+
+    const sortedArticles = [...positions]
+        .sort((a, b) => Number(b.id) - Number(a.id));
+
+    let html = `
+<!DOCTYPE html>
+<html>
+<head>
+<title>LOG OF ENTRIES</title>
+<style>
+body{
+    background:#E1FF00;
+    color:#000;
+    font-family:Courier New, monospace;
+    padding:40px;
+    max-width:900px;
+    margin:auto;
+}
+h1{
+    font-family:Impact;
+    font-size:3rem;
+    margin-bottom:40px;
+}
+.entry{
+    margin-bottom:25px;
+    padding-bottom:25px;
+    border-bottom:1px solid #000;
+}
+.id{font-weight:bold;}
+.title{font-size:1.4rem;font-weight:bold;text-transform:uppercase;}
+.author{margin-top:5px;}
+.open{color:red;font-weight:bold;display:inline-block;margin-top:10px;}
+</style>
+</head>
+<body>
+
+<h1>LOG OF ENTRIES</h1>
+`;
+
+    sortedArticles.forEach(article => {
+
+        html += `
+<div class="entry">
+<div class="id">#${article.id}</div>
+<div class="title">${article.title || ""}</div>
+<div class="author">BY ${article.author || "UNKNOWN"}</div>
+<a href="#" class="open"
+onclick="openArticle(${article.id});return false;">
+OPEN .TXT ↗
+</a>
+</div>
+`;
+    });
+
+    html += `
+<script>
+
+const articles = ${JSON.stringify(sortedArticles)};
+
+function openArticle(id){
+
+    const article = articles.find(a => Number(a.id) === Number(id));
+
+    const content =
+\`\${article.title}
+
+\${article.subtitle}
+
+--------------------------------------------------
+
+\${article.content}\`;
+
+    const blob = new Blob([content], {type:'text/plain;charset=utf-8'});
+    window.open(URL.createObjectURL(blob),'_blank');
+}
+
+</script>
+
+</body>
+</html>
+`;
+
+    const win = window.open();
+    win.document.open();
+    win.document.write(html);
+    win.document.close();
+
+});
+
+/* ---------------- FETCH ---------------- */
 
 fetch(SHEET_URL)
     .then(res => res.json())
     .then(data => {
 
-      positions = data
-    .sort((a, b) => Number(b.id) - Number(a.id))
-    .slice(0, 5);
+        positions = data
+            .sort((a, b) => Number(b.id) - Number(a.id))
+            .slice(0, 5);
 
         if (!positions.length) {
             title.textContent = "NO ENTRIES";
@@ -457,9 +559,11 @@ fetch(SHEET_URL)
         index = 0;
 
         title.textContent = positions[0].title;
+
         author.textContent = positions[0].author
-    ? `BY: ${positions[0].author}`
-    : "";
+            ? `BY: ${positions[0].author}`
+            : "";
+
         subtitle.textContent = positions[0].subtitle;
 
         if (positions[0].image) {
@@ -480,8 +584,6 @@ fetch(SHEET_URL)
 
         setLoaded();
     });
-
-
 
 </script>
 </body>
