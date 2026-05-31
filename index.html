@@ -443,7 +443,9 @@ fetch(SHEET_URL)
     .then(res => res.json())
     .then(data => {
 
-        positions = data;
+        positions = data.sort(
+    (a, b) => Number(b.id) - Number(a.id)
+);
 
         if (!positions.length) {
             title.textContent = "NO ENTRIES";
