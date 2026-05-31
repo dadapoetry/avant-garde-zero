@@ -246,8 +246,8 @@
                 </div>
                 
                 <div class="content-block">
-                    <h4 id="r-author" class="display-author">...</h4>
                     <h2 id="r-title" class="display-title">...</h2>
+                    <h4 id="r-author" class="display-author">...</h4>
                     <p id="r-subtitle" class="display-subtitle">...</p>
                     <a href="#" id="r-link" class="read-link">read full .txt ↗</a>
                 </div>
@@ -280,8 +280,8 @@ const author = document.getElementById('r-author');
 const link = document.getElementById('r-link');
 
 box.classList.add("loading");
-author.textContent = "By who?";
 title.textContent = "LOADING...";
+author.textContent = "By who?";
 subtitle.textContent = "syncing archive...";
 
 function setLoaded() {
@@ -304,8 +304,8 @@ function loadData(idx) {
     setTimeout(() => {
 
         const item = positions[idx];
-        author.textContent = item.author || "";
         title.textContent = item.title || "";
+        author.textContent = item.author || "";
         subtitle.textContent = item.subtitle || "";
 
         if (item.image) {
@@ -410,8 +410,8 @@ fetch(SHEET_URL)
 
         index = 0;
 
-        author.textContent = positions[0].author;
         title.textContent = positions[0].title;
+        author.textContent = positions[0].author;
         subtitle.textContent = positions[0].subtitle;
 
         if (positions[0].image) {
@@ -426,8 +426,8 @@ fetch(SHEET_URL)
 
         console.error(err);
 
-        author.textContent = "I see no god over here";
         title.textContent = "CONNECTION ERROR";
+        author.textContent = "I see no god over here";
         subtitle.textContent = "Unable to load entries.";
 
         setLoaded();
