@@ -10,7 +10,7 @@
             --bg: #E1FF00;          
             --text: #000000;        
             --accent: #FF0000;      
-            
+
             --font-brutal: 'Arial Black', Impact, sans-serif;
             --font-mono: 'Courier New', Courier, monospace;
         }
@@ -278,21 +278,21 @@
 
     <div class="showcase-wrapper">
          <div id="btn-prev" class="nav-arrow">&lt;</div>
-        
+
         <main class="showcase-zero">
             <div id="rotator" class="rotator-box">
-                
+
                 <div class="image-container">
                     <img id="r-img" src="" alt="position imagery" class="article-img">
                 </div>
-                
+
                 <div class="content-block">
                     <h2 id="r-title" class="display-title">...</h2>
                     <h4 id="r-author" class="display-author">...</h4>
                     <p id="r-subtitle" class="display-subtitle">...</p>
                     <a href="#" id="r-link" class="read-link">read full .txt ↗</a>
                 </div>
-                
+
             </div>
         </main>
 
@@ -301,11 +301,186 @@
 
     <div class="side-footer">
         <span><b>ISSN: 0000-0000</b></span>
+        <a href="/archive">LOG OF ENTRIES ↗</a>
         <a href="#" id="log-link">LOG OF ENTRIES ↗</a>
     </div>
 
 <script>
-const SHEET_URL = "https://opensheet.elk.sh/1fj2YvMnsdVfSBKdRlMhfABB3ccIjah7Z1iFAAgGoxug/Articles"; let positions = []; let index = 0; let timer; const box = document.getElementById('rotator'); const img = document.getElementById('r-img'); const title = document.getElementById('r-title'); const subtitle = document.getElementById('r-subtitle'); const author = document.getElementById('r-author'); const link = document.getElementById('r-link'); box.classList.add("loading"); title.textContent = "LOADING..."; author.textContent = "By who?"; subtitle.textContent = "syncing archive..."; function setLoaded() { box.classList.remove("loading"); box.classList.add("loaded"); } function setLoading() { box.classList.remove("loaded"); box.classList.add("loading"); } function loadData(idx) { if (!positions.length) return; setLoading(); setTimeout(() => { const item = positions[idx]; title.textContent = item.title || ""; author.textContent = item.author ? BY: ${item.author} : ""; subtitle.textContent = item.subtitle || ""; if (item.image) { img.src = item.image; img.style.display = "block"; } else { img.style.display = "none"; } setLoaded(); }, 80); } function nextArticle() { if (!positions.length) return; index = (index + 1) % positions.length; loadData(index); } function prevArticle() { if (!positions.length) return; index = (index - 1 + positions.length) % positions.length; loadData(index); } function startAutoPlay() { clearInterval(timer); timer = setInterval(() => { if (positions.length > 1) nextArticle(); }, 6000); } document.getElementById('btn-next').addEventListener('click', () => { nextArticle(); startAutoPlay(); }); document.getElementById('btn-prev').addEventListener('click', () => { prevArticle(); startAutoPlay(); }); link.addEventListener('click', (e) => { e.preventDefault(); if (!positions.length) return; const article = positions[index]; const content = ------------------------------------------------- AVANT-GARDE ZERO Point zero of the new international avant-garde ISSN: ... https://avantzero.dev.page ------------------------------------------------- ${article.title || ""} BY: ${article.author || ""} ${article.subtitle || ""} -------------------------------------------------- ${article.content || ""} ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Rights of the article: ${article.author || ""} ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~; const blob = new Blob([content], { type: "text/plain;charset=utf-8" }); const url = URL.createObjectURL(blob); window.open(url, "_blank"); }); fetch(SHEET_URL) .then(res => res.json()) .then(data => { positions = data .sort((a, b) => Number(b.id) - Number(a.id)) .slice(0, 5); if (!positions.length) { title.textContent = "NO ENTRIES"; subtitle.textContent = "No articles available."; setLoaded(); return; } index = 0; title.textContent = positions[0].title; author.textContent = positions[0].author ? BY: ${positions[0].author} : ""; subtitle.textContent = positions[0].subtitle; if (positions[0].image) { img.src = positions[0].image; } setLoaded(); startAutoPlay(); }) .catch(err => { console.error(err); title.textContent = "CONNECTION ERROR"; author.textContent = "I see no god over here"; subtitle.textContent = "Unable to load entries."; setLoaded(); });
+
+const SHEET_URL =
+  "https://opensheet.elk.sh/1fj2YvMnsdVfSBKdRlMhfABB3ccIjah7Z1iFAAgGoxug/Articles";
+
+let positions = [];
+let index = 0;
+let timer;
+
+const box = document.getElementById('rotator');
+const img = document.getElementById('r-img');
+const title = document.getElementById('r-title');
+const subtitle = document.getElementById('r-subtitle');
+const author = document.getElementById('r-author');
+const link = document.getElementById('r-link');
+
+box.classList.add("loading");
+title.textContent = "LOADING...";
+author.textContent = "By who?";
+subtitle.textContent = "syncing archive...";
+
+function setLoaded() {
+    box.classList.remove("loading");
+    box.classList.add("loaded");
+}
+
+function setLoading() {
+    box.classList.remove("loaded");
+    box.classList.add("loading");
+}
+
+
+function loadData(idx) {
+
+    if (!positions.length) return;
+
+    setLoading();
+
+    setTimeout(() => {
+
+        const item = positions[idx];
+        title.textContent = item.title || "";
+        author.textContent = item.author
+            ? `BY: ${item.author}`
+            : "";
+        subtitle.textContent = item.subtitle || "";
+
+        if (item.image) {
+            img.src = item.image;
+            img.style.display = "block";
+        } else {
+            img.style.display = "none";
+        }
+
+        setLoaded();
+
+    }, 80);
+}
+
+
+function nextArticle() {
+    if (!positions.length) return;
+    index = (index + 1) % positions.length;
+    loadData(index);
+}
+
+function prevArticle() {
+    if (!positions.length) return;
+    index = (index - 1 + positions.length) % positions.length;
+    loadData(index);
+}
+
+
+
+function startAutoPlay() {
+    clearInterval(timer);
+    timer = setInterval(() => {
+        if (positions.length > 1) nextArticle();
+    }, 6000);
+}
+
+
+
+document.getElementById('btn-next').addEventListener('click', () => {
+    nextArticle();
+    startAutoPlay();
+});
+
+document.getElementById('btn-prev').addEventListener('click', () => {
+    prevArticle();
+    startAutoPlay();
+});
+
+
+
+link.addEventListener('click', (e) => {
+
+    e.preventDefault();
+    if (!positions.length) return;
+
+    const article = positions[index];
+
+    const content =
+`-------------------------------------------------
+
+AVANT-GARDE ZERO
+Point zero of the new international avant-garde
+ISSN: ...
+https://avantzero.dev.page
+
+-------------------------------------------------
+
+${article.title || ""}
+BY: ${article.author || ""}
+
+${article.subtitle || ""}
+
+--------------------------------------------------
+
+${article.content || ""}
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Rights of the article: ${article.author || ""}
+      
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`;
+
+    const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+
+    window.open(url, "_blank");
+});
+
+
+
+fetch(SHEET_URL)
+    .then(res => res.json())
+    .then(data => {
+
+      positions = data
+    .sort((a, b) => Number(b.id) - Number(a.id))
+    .slice(0, 5);
+
+        if (!positions.length) {
+            title.textContent = "NO ENTRIES";
+            subtitle.textContent = "No articles available.";
+            setLoaded();
+            return;
+        }
+
+        index = 0;
+
+        title.textContent = positions[0].title;
+        author.textContent = positions[0].author
+    ? `BY: ${positions[0].author}`
+    : "";
+        subtitle.textContent = positions[0].subtitle;
+
+        if (positions[0].image) {
+            img.src = positions[0].image;
+        }
+
+        setLoaded();
+        startAutoPlay();
+
+    })
+    .catch(err => {
+
+        console.error(err);
+
+        title.textContent = "CONNECTION ERROR";
+        author.textContent = "I see no god over here";
+        subtitle.textContent = "Unable to load entries.";
+
+        setLoaded();
+    });
 
 </script>
 </body>
