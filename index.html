@@ -1,1 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVANT-GARDE ZERO</title>
+    <style>
 
+        :root {
+            --bg: #E1FF00;          /* Acid/Fluorescent Yellow. */
+            --text: #000000;        /* Pure absolute black */
+            --accent: #FF0000;      /* Pure danger red */
+            
+            --font-brutal: 'Arial Black', Impact, sans-serif;
+            --font-mono: 'Courier New', Courier, monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font-mono);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            padding: 8vh 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between; 
+            text-align: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .header-zero {
+            width: 100%;
+            margin-bottom: 8vh;
+        }
+
+        .main-title {
+            font-family: var(--font-brutal);
+            font-size: clamp(3rem, 11vw, 9rem); 
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -0.05em;
+            line-height: 0.8;
+            color: var(--text);
+            margin-bottom: 15px;
+        }
+
+        .contact-email {
+            font-family: var(--font-mono);
+            font-size: clamp(14px, 2vw, 16px);
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+            letter-spacing: 0.05em;
+            text-transform: lowercase;
+            background-color: var(--text);
+            color: var(--bg);
+            padding: 4px 12px;
+            transition: all 0.15s ease;
+        }
+
+        .contact-email:hover {
+            background-color: var(--accent);
+            color: #FFFFFF;
+        }
+
+        .showcase-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            width: 100%;
+            max-width: 1100px;
+            margin: auto 0;
+        }
+
+        .nav-arrow {
+            font-family: var(--font-brutal);
+            font-size: clamp(3rem, 8vw, 6rem);
+            cursor: pointer;
+            user-select: none;
+            transition: color 0.1s;
+        }
+
+        .nav-arrow:hover { color: var(--accent); }
+
+        .showcase-zero {
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .rotator-box {
+            opacity: 0;
+            transition: opacity 0.05s steps(1); /* Pure mechanical cut */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 50px;
+            text-align: left;
+        }
+
+        .image-container {
+            flex-shrink: 0;
+            width: clamp(140px, 20vw, 220px);
+            aspect-ratio: 1 / 1; 
+            background-color: var(--bg); 
+        }
+
+        .article-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%) contrast(220%) brightness(90%); 
+            mix-blend-mode: multiply; 
+        }
+
+        .content-block {
+            max-width: 500px;
+        }
+
+        .display-title {
+            font-family: var(--font-brutal);
+            font-size: clamp(2.2rem, 4vw, 3.5rem);
+            text-transform: uppercase;
+            line-height: 0.9;
+            letter-spacing: -0.04em;
+            margin-bottom: 20px;
+            color: var(--text);
+        }
+
+        .display-subtitle {
+            font-family: var(--font-mono);
+            font-size: clamp(1rem, 1.8vw, 1.15rem);
+            line-height: 1.4;
+            color: var(--text);
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        .read-link {
+            font-family: var(--font-mono);
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-decoration: none;
+            color: var(--accent);
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 2px;
+            letter-spacing: 0.05em;
+        }
+
+        .read-link:hover {
+            color: var(--bg);
+            background-color: var(--accent);
+        }
+
+.side-footer {
+    position: fixed;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    writing-mode: vertical-rl;
+}
+
+.side-footer a {
+            color: var(--text);
+            border-left: 2px solid var(--text);
+}
+
+.side-footer a:hover {
+  	color: var(--bg);
+        background-color: var(--text);
+}
+
+
+        @media (max-width: 768px) {
+            body { padding: 40px 20px 80px 20px; justify-content: flex-start; }
+            .showcase-wrapper { position: relative; gap: 0; }
+            .rotator-box { flex-direction: column; text-align: center; gap: 40px; }
+            .image-container { width: 160px; }
+            .display-title { font-size: 2.6rem; }
+            
+            .side-footer {
+                position: static;
+                transform: none;
+                margin-top: 100px;
+                justify-content: center;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header-zero">
+        <h1 class="main-title">avant-garde zero</h1>
+        <a href="mailto:submit@avantgardezero.com" class="contact-email">submit@avantgardezero.com</a>
+    </header>
+
+    <div class="showcase-wrapper">
+         <div id="btn-prev" class="nav-arrow">&lt;</div>
+        
+        <main class="showcase-zero">
+            <div id="rotator" class="rotator-box">
+                
+                <div class="image-container">
+                    <img id="r-img" src="" alt="position imagery" class="article-img">
+                </div>
+                
+                <div class="content-block">
+                    <h2 id="r-title" class="display-title">...</h2>
+                    <p id="r-subtitle" class="display-subtitle">...</p>
+                    <a href="#" id="r-link" class="read-link">read full .txt ↗</a>
+                </div>
+                
+            </div>
+        </main>
+
+        <div id="btn-next" class="nav-arrow">&gt;</div>
+    </div>
+
+    <div class="side-footer">
+        <span><b>ISSN: 0000-0000</b></span>
+        <a href="/archive">LOG OF ENTRIES ↗</a>
+    </div>
+
+   <script>
+const SHEET_URL =
+  "https://opensheet.elk.sh/1fj2YvMnsdVfSBKdRlMhfABB3ccIjah7Z1iFAAgGoxug/Articles";
+
+let positions = [];
+let index = 0;
+let timer;
+
+const box = document.getElementById('rotator');
+const img = document.getElementById('r-img');
+const title = document.getElementById('r-title');
+const subtitle = document.getElementById('r-subtitle');
+const link = document.getElementById('r-link');
+
+function loadData(idx) {
+
+    if (!positions.length) return;
+
+    box.style.opacity = 0;
+
+    setTimeout(() => {
+
+        const item = positions[idx];
+
+        title.textContent = item.title || "";
+        subtitle.textContent = item.subtitle || "";
+
+        if (item.image) {
+            img.src = item.image;
+            img.style.display = "block";
+        } else {
+            img.style.display = "none";
+        }
+
+        box.style.opacity = 1;
+
+    }, 50);
+}
+
+function nextArticle() {
+
+    if (!positions.length) return;
+
+    index = (index + 1) % positions.length;
+    loadData(index);
+}
+
+function prevArticle() {
+
+    if (!positions.length) return;
+
+    index = (index - 1 + positions.length) % positions.length;
+    loadData(index);
+}
+
+function startAutoPlay() {
+
+    clearInterval(timer);
+
+    timer = setInterval(() => {
+
+        if (positions.length > 1) {
+            nextArticle();
+        }
+
+    }, 6000);
+}
+
+document.getElementById('btn-next').addEventListener('click', () => {
+    nextArticle();
+    startAutoPlay();
+});
+
+document.getElementById('btn-prev').addEventListener('click', () => {
+    prevArticle();
+    startAutoPlay();
+});
+
+link.addEventListener('click', (e) => {
+
+    e.preventDefault();
+
+    if (!positions.length) return;
+
+    const article = positions[index];
+
+    const content =
+`${article.title || ""}
+
+${article.subtitle || ""}
+
+--------------------------------------------------
+
+${article.content || ""}`;
+
+    const blob = new Blob(
+        [content],
+        { type: "text/plain;charset=utf-8" }
+    );
+
+    const url = URL.createObjectURL(blob);
+
+    window.open(url, "_blank");
+});
+
+fetch(SHEET_URL)
+    .then(response => response.json())
+    .then(data => {
+
+        positions = data;
+
+        if (!positions.length) {
+
+            title.textContent = "NO ENTRIES";
+            subtitle.textContent = "No articles available.";
+            return;
+        }
+
+        loadData(0);
+        startAutoPlay();
+    })
+    .catch(error => {
+
+        console.error(error);
+
+        title.textContent = "CONNECTION ERROR";
+        subtitle.textContent = "Unable to load entries.";
+
+    });
+</script>
+</body>
+</html>
