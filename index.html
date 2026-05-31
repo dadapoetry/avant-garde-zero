@@ -205,13 +205,27 @@
             
 .side-footer {
     position: static;
-    transform: none;
     margin-top: 80px;
-    writing-mode: horizontal-tb;
+
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    justify-content: center;
+    gap: 20px;
+
+    writing-mode: horizontal-tb;
+    transform: none;
+
+    font-size: 12px;
+    letter-spacing: 0.08em;
+
+    opacity: 0.8;
   }
+
+  .side-footer a {
+    border-left: none;
+    border-bottom: 2px solid var(--text);
+    padding-bottom: 2px;
+  }
+}
             }
         }
     </style>
