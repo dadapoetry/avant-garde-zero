@@ -301,7 +301,7 @@
 
     <div class="side-footer">
         <span><b>ISSN: 0000-0000</b></span>
-        <a href="/archive">LOG OF ENTRIES ↗</a>
+        <a href="#" id="log-link">LOG OF ENTRIES ↗</a>
     </div>
 
 <script>
@@ -480,6 +480,125 @@ fetch(SHEET_URL)
 
         setLoaded();
     });
+
+    document.getElementById('log-link').addEventListener('click', (e) => {
+
+    e.preventDefault();
+
+    const sortedArticles = [...positions]
+        .sort((a, b) => Number(b.id) - Number(a.id));
+
+    let html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>LOG OF ENTRIES</title>
+        <style>
+            body{
+                background:#E1FF00;
+                color:#000;
+                font-family:"Courier New", monospace;
+                padding:40px;
+                max-width:900px;
+                margin:auto;
+            }
+
+            h1{
+                font-family:Impact,sans-serif;
+                font-size:3rem;
+                margin-bottom:40px;
+            }
+
+            .entry{
+                margin-bottom:25px;
+                padding-bottom:25px;
+                border-bottom:1px solid #000;
+            }
+
+            .id{
+                font-weight:bold;
+                margin-bottom:5px;
+            }
+
+            .title{
+                font-size:1.4rem;
+                font-weight:bold;
+                text-transform:uppercase;
+            }
+
+            .author{
+                margin-top:5px;
+            }
+
+            .open{
+                display:inline-block;
+                margin-top:10px;
+                color:red;
+                text-decoration:none;
+                font-weight:bold;
+            }
+        </style>
+    </head>
+    <body>
+
+    <h1>LOG OF ENTRIES</h1>
+    `;
+
+    sortedArticles.forEach(article => {
+
+        html += `
+        <div class="entry">
+            <div class="id">#${article.id}</div>
+            <div class="title">${article.title}</div>
+            <div class="author">BY ${article.author || "UNKNOWN"}</div>
+            <a href="#" class="open"
+               onclick="openArticle(${article.id});return false;">
+               OPEN .TXT ↗
+            </a>
+        </div>
+        `;
+    });
+
+    html += `
+    <script>
+
+    const articles = ${JSON.stringify(sortedArticles)};
+
+    function openArticle(id){
+
+        const article =
+            articles.find(a => Number(a.id) === Number(id));
+
+        const content =
+\`\${article.title}
+
+\${article.subtitle}
+
+--------------------------------------------------
+
+\${article.content}\`;
+
+        const blob = new Blob(
+            [content],
+            {type:'text/plain;charset=utf-8'}
+        );
+
+        window.open(URL.createObjectURL(blob),'_blank');
+    }
+
+    </script>
+
+    </body>
+    </html>
+    `;
+
+    const win = window.open();
+
+    win.document.open();
+    win.document.write(html);
+    win.document.close();
+
+});
 
 </script>
 </body>
