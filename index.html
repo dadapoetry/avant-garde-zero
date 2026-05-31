@@ -301,7 +301,6 @@
 
     <div class="side-footer">
         <span><b>ISSN: 0000-0000</b></span>
-        <a href="/archive">LOG OF ENTRIES ↗</a>
         <a href="#" id="log-link">LOG OF ENTRIES ↗</a>
     </div>
 
@@ -481,6 +480,86 @@ fetch(SHEET_URL)
 
         setLoaded();
     });
+
+    document.getElementById('log-link').addEventListener('click', (e) => {
+    e.preventDefault();
+
+    if (!positions.length) return;
+
+    const sorted = [...positions]
+        .sort((a, b) => Number(b.id) - Number(a.id));
+
+    const win = window.open("", "_blank");
+
+    const style = `
+        body{
+            background:#E1FF00;
+            color:#000;
+            font-family:Courier New, monospace;
+            padding:40px;
+        }
+        h1{
+            font-family:Impact;
+            font-size:3rem;
+            margin-bottom:30px;
+        }
+        .entry{
+            border-bottom:1px solid #000;
+            padding:15px 0;
+        }
+        .title{
+            font-weight:bold;
+            text-transform:uppercase;
+        }
+        .author{
+            margin-top:5px;
+        }
+        button{
+            margin-top:10px;
+            background:red;
+            color:white;
+            border:none;
+            padding:6px 10px;
+            cursor:pointer;
+        }
+    `;
+
+    win.document.body.innerHTML = `<style>${style}</style><h1>LOG OF ENTRIES</h1>`;
+
+    sorted.forEach(article => {
+
+        const div = win.document.createElement("div");
+        div.className = "entry";
+
+        div.innerHTML = `
+            <div class="title">${article.title || ""}</div>
+            <div class="author">BY ${article.author || "UNKNOWN"}</div>
+        `;
+
+        const btn = win.document.createElement("button");
+        btn.textContent = "OPEN .TXT";
+
+        btn.onclick = () => {
+
+            const content =
+`${article.title}
+
+${article.subtitle}
+
+--------------------------
+
+${article.content}`;
+
+            const blob = new Blob([content], { type: "text/plain" });
+            const url = URL.createObjectURL(blob);
+
+            window.open(url, "_blank");
+        };
+
+        div.appendChild(btn);
+        win.document.body.appendChild(div);
+    });
+});
 
 </script>
 </body>
