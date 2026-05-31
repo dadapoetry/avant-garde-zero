@@ -539,23 +539,32 @@ fetch(SHEET_URL)
         const btn = win.document.createElement("button");
         btn.textContent = "OPEN .TXT";
 
-        btn.onclick = () => {
+       btn.onclick = () => {
 
-            const content =
-`${article.title}
+    const article = positions.find(a => Number(a.id) === Number(article.id)) || article;
 
-${article.subtitle}
+    const content =
+`${article.title || ""}
+
+${article.subtitle || ""}
 
 --------------------------
 
-${article.content}`;
+${article.content || ""}`;
 
-            const blob = new Blob([content], { type: "text/plain" });
-            const url = URL.createObjectURL(blob);
+    const blob = new Blob([content], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
 
-            window.open(url, "_blank");
-        };
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${article.title || "article"}.txt`;
 
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    URL.revokeObjectURL(url);
+};
         div.appendChild(btn);
         win.document.body.appendChild(div);
     });
