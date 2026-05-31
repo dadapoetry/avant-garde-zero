@@ -7,9 +7,9 @@
     <style>
 
         :root {
-            --bg: #E1FF00;          /* Acid/Fluorescent Yellow. */
-            --text: #000000;        /* Pure absolute black */
-            --accent: #FF0000;      /* Pure danger red */
+            --bg: #E1FF00;          
+            --text: #000000;        
+            --accent: #FF0000;      
             
             --font-brutal: 'Arial Black', Impact, sans-serif;
             --font-mono: 'Courier New', Courier, monospace;
@@ -143,6 +143,15 @@
             color: var(--text);
             margin-bottom: 25px;
             font-weight: 600;
+        }
+
+        .display-author {
+            font-family: var(--font-mono);
+            font-size: clamp(0.75rem, 2.4vw; 0.75rem);
+            line-height: 1.7;
+            color: var(--text);
+            margin-bottom: 15px;
+            
         }
 
         .read-link {
