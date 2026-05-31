@@ -233,8 +233,8 @@
         <a href="/archive">LOG OF ENTRIES ↗</a>
     </div>
 
-   <script>
- 
+<script>
+
 const SHEET_URL =
   "https://opensheet.elk.sh/1fj2YvMnsdVfSBKdRlMhfABB3ccIjah7Z1iFAAgGoxug/Articles";
 
@@ -247,6 +247,12 @@ const img = document.getElementById('r-img');
 const title = document.getElementById('r-title');
 const subtitle = document.getElementById('r-subtitle');
 const link = document.getElementById('r-link');
+
+
+title.textContent = "LOADING...";
+subtitle.textContent = "syncing archive...";
+box.style.opacity = 1;
+
 
 function loadData(idx) {
 
@@ -270,8 +276,9 @@ function loadData(idx) {
 
         box.style.opacity = 1;
 
-    }, 50);
+    }, 60);
 }
+
 
 function nextArticle() {
 
@@ -339,6 +346,7 @@ ${article.content || ""}`;
     window.open(url, "_blank");
 });
 
+
 fetch(SHEET_URL)
     .then(response => response.json())
     .then(data => {
@@ -349,10 +357,22 @@ fetch(SHEET_URL)
 
             title.textContent = "NO ENTRIES";
             subtitle.textContent = "No articles available.";
+            box.style.opacity = 1;
+
             return;
         }
 
-        loadData(0);
+        index = 0;
+
+        title.textContent = positions[0].title;
+        subtitle.textContent = positions[0].subtitle;
+
+        if (positions[0].image) {
+            img.src = positions[0].image;
+        }
+
+        box.style.opacity = 1;
+
         startAutoPlay();
     })
     .catch(error => {
@@ -361,8 +381,10 @@ fetch(SHEET_URL)
 
         title.textContent = "CONNECTION ERROR";
         subtitle.textContent = "Unable to load entries.";
+        box.style.opacity = 1;
 
     });
+
 </script>
 </body>
 </html>
