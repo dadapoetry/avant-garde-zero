@@ -309,7 +309,7 @@ function loadData(idx) {
         const item = positions[idx];
         title.textContent = item.title || "";
         author.textContent = item.author
-            ? `By: ${item.author}`
+            ? `BY: ${item.author}`
             : "";
         subtitle.textContent = item.subtitle || "";
 
@@ -417,7 +417,7 @@ fetch(SHEET_URL)
 
         title.textContent = positions[0].title;
         author.textContent = positions[0].author
-    ? `By: ${positions[0].author}`
+    ? `BY: ${positions[0].author}`
     : "";
         subtitle.textContent = positions[0].subtitle;
 
