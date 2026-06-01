@@ -517,11 +517,20 @@ Rights of the article: ${article.author || ""}
       
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`;
 
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    textContent = textContent.replace(urlRegex, function(url) {
-        return `<a href="${url}" target="_blank" style="color: #FF0000; text-decoration: underline; font-weight: bold;">${url}</a>`;
+
+    const linkRegex = /(?:\[([^\]]+)\]\((https?:\/\/[^\s)]+)\))|(https?:\/\/[^\s]+)/g;
+    
+    textContent = textContent.replace(linkRegex, function(match, text, markdownUrl, rawUrl) {
+        if (rawUrl) {
+            
+            return `<a href="${rawUrl}" target="_blank" style="color: #FF0000; text-decoration: underline; font-weight: bold;">${rawUrl}</a>`;
+        } else {
+           
+            return `<a href="${markdownUrl}" target="_blank" style="color: #FF0000; text-decoration: underline; font-weight: bold;">${text}</a>`;
+        }
     });
 
+ 
     const htmlWrapper = `
     <!DOCTYPE html>
     <html lang="en">
@@ -553,7 +562,6 @@ Rights of the article: ${article.author || ""}
     const url = URL.createObjectURL(blob);
     window.open(url, "_blank");
 }
-
 link.addEventListener('click', (e) => {
     e.preventDefault();
     if (!positions.length) return;
