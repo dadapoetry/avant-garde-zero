@@ -319,7 +319,7 @@
         }
 
 
-        @media (max-width: 768px) {
+@media (max-width: 768px) {
             body {
                 padding: 30px 20px;
                 justify-content: flex-start;
@@ -327,7 +327,12 @@
             }
 
             .header-zero { margin-bottom: 35px; }
-            .showcase-wrapper { position: relative; gap: 0; }
+            
+            .showcase-wrapper { 
+                position: relative; 
+                gap: 15px; /* Pequeño margen de seguridad con las flechas */
+                justify-content: space-between;
+            }
             
             .rotator-box {
                 flex-direction: column;
@@ -336,7 +341,14 @@
             }
 
             .image-container { width: 140px; background-color: var(--bg); }
-            .display-title { font-size: 2.4rem; margin-bottom: 15px; line-height: 0.95; }
+            
+            .display-title { 
+                font-size: 2.4rem; 
+                margin-bottom: 15px; 
+                line-height: 0.95; 
+                word-break: break-word; /* Reafirma la ruptura en móviles */
+            }
+            
             .display-subtitle { margin-bottom: 20px; line-height: 1.4; }
             .main-title { font-size: 4rem; line-height: 0.9; letter-spacing: -0.02em; }
 
