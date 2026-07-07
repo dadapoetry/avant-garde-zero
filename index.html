@@ -376,6 +376,21 @@
             margin: 0 auto;
         }
 
+        .log-issue-header {
+            font-family: var(--font-brutal);
+            text-transform: uppercase;
+            font-size: clamp(1.5rem, 3vw, 2.5rem);
+            line-height: 0.9;
+            margin: 40px 0 10px;
+            padding-top: 20px;
+            border-top: 4px solid var(--text);
+        }
+
+        .log-issue-header:first-of-type {
+            margin-top: 0;
+            border-top: none;
+        }
+
         .log-item {
             display: flex;
             justify-content: space-between;
@@ -932,52 +947,82 @@ window.addEventListener('popstate', () => {
 });
 
 
+function getIssueNum(coordinate) {
+    if (!coordinate) return null;
+    const m = String(coordinate).match(/^(\d+)/);
+    return m ? m[1] : null;
+}
+
 function buildArchiveLog() {
     logContentList.innerHTML = "";
     
-    allPositions.forEach((article) => {
-        const item = document.createElement('div');
-        item.className = 'log-item';
+    const groups = {};
+    allPositions.forEach(article => {
+        const issue = getIssueNum(article.issue) || '—';
+        if (!groups[issue]) groups[issue] = [];
+        groups[issue].push(article);
+    });
+    
+    const sortedIssues = Object.keys(groups).sort((a, b) => Number(b) - Number(a));
+    
+    sortedIssues.forEach((issue, idx) => {
+        if (issue !== '—') {
+            const header = document.createElement('div');
+            header.className = 'log-issue-header';
+            header.textContent = `ISSUE ${issue}`;
+            logContentList.appendChild(header);
+        }
         
-        const articleUrl = `https://ag0.surge.sh/?entry=${article.id}`;
-        
-        item.innerHTML = `
-            <div class="log-item-info">
-                <span class="log-item-title" style="cursor:pointer;">${article.title || "UNTITLED"}</span>
-                <span class="log-item-author">${article.author ? `BY: ${article.author}` : "ANONYMOUS"}</span>
-                <span class="log-copy-link" data-url="${articleUrl}">[COPY LINK]</span>
-            </div>
-            <span class="log-download-trigger">READ FULL .txt ↗</span>
-        `;
-        
-        item.querySelector('.log-item-title').addEventListener('click', () => {
-            logOverlay.style.display = 'none';
-            showArticle(article);
+        groups[issue].sort((a, b) => {
+            const aNum = a.issue ? parseFloat(a.issue) : -1;
+            const bNum = b.issue ? parseFloat(b.issue) : -1;
+            return bNum - aNum;
         });
         
-        item.querySelector('.log-download-trigger').addEventListener('click', () => {
-            generateTextFile(article);
+        groups[issue].forEach((article) => {
+            const item = document.createElement('div');
+            item.className = 'log-item';
+            
+            const articleUrl = `https://ag0.surge.sh/?entry=${article.id}`;
+            
+            item.innerHTML = `
+                <div class="log-item-info">
+                    <span class="log-item-title" style="cursor:pointer;">${article.title || "UNTITLED"}</span>
+                    <span class="log-item-author">${article.author ? `BY: ${article.author}` : "ANONYMOUS"}${article.issue ? ` // COORD ${article.issue}` : ''}</span>
+                    <span class="log-copy-link" data-url="${articleUrl}">[COPY LINK]</span>
+                </div>
+                <span class="log-download-trigger">READ FULL .txt ↗</span>
+            `;
+            
+            item.querySelector('.log-item-title').addEventListener('click', () => {
+                logOverlay.style.display = 'none';
+                showArticle(article);
+            });
+            
+            item.querySelector('.log-download-trigger').addEventListener('click', () => {
+                generateTextFile(article);
+            });
+            
+            item.querySelector('.log-copy-link').addEventListener('click', async (e) => {
+                const url = e.currentTarget.getAttribute('data-url');
+                try {
+                    await navigator.clipboard.writeText(url);
+                    e.currentTarget.textContent = '[COPIED!]';
+                    setTimeout(() => { e.currentTarget.textContent = '[COPY LINK]'; }, 2000);
+                } catch {
+                    const textarea = document.createElement('textarea');
+                    textarea.value = url;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                    e.currentTarget.textContent = '[COPIED!]';
+                    setTimeout(() => { e.currentTarget.textContent = '[COPY LINK]'; }, 2000);
+                }
+            });
+            
+            logContentList.appendChild(item);
         });
-        
-        item.querySelector('.log-copy-link').addEventListener('click', async (e) => {
-            const url = e.currentTarget.getAttribute('data-url');
-            try {
-                await navigator.clipboard.writeText(url);
-                e.currentTarget.textContent = '[COPIED!]';
-                setTimeout(() => { e.currentTarget.textContent = '[COPY LINK]'; }, 2000);
-            } catch {
-                const textarea = document.createElement('textarea');
-                textarea.value = url;
-                document.body.appendChild(textarea);
-                textarea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textarea);
-                e.currentTarget.textContent = '[COPIED!]';
-                setTimeout(() => { e.currentTarget.textContent = '[COPY LINK]'; }, 2000);
-            }
-        });
-        
-        logContentList.appendChild(item);
     });
 }
 
