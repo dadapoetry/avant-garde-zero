@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AVANT-GARDE ZERO</title>
     <meta name="description" content="Point zero of the new international avant-garde.">
+    <meta property="og:title" content="AVANT-GARDE ZERO">
+    <meta property="og:description" content="Point zero of the new international avant-garde.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ag0.surge.sh">
+    <meta property="og:image" content="">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="AVANT-GARDE ZERO">
+    <meta name="twitter:description" content="Point zero of the new international avant-garde.">
+    <meta name="twitter:image" content="">
+    <link rel="canonical" href="https://ag0.surge.sh">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23000000'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Arial, sans-serif' font-size='22' font-weight='900' fill='%23E1FF00'%3E%C3%98%3C/text%3E%3C/svg%3E">
     <style>
 
@@ -216,6 +226,96 @@
 }
 
    
+        .detail-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            padding: 8vh 60px;
+            overflow-y: auto;
+            text-align: left;
+        }
+
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid var(--text);
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+        }
+
+        .detail-main-title {
+            font-family: var(--font-brutal);
+            text-transform: uppercase;
+            font-size: clamp(1.5rem, 4vw, 3rem);
+            line-height: 0.9;
+        }
+
+        .detail-close-btn {
+            font-family: var(--font-mono);
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            background-color: var(--text);
+            color: var(--bg);
+            padding: 6px 14px;
+            text-transform: uppercase;
+        }
+
+        .detail-close-btn:hover {
+            background-color: var(--accent);
+            color: #FFFFFF;
+        }
+
+        .detail-body {
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .detail-body h2 {
+            font-family: var(--font-brutal);
+            text-transform: uppercase;
+            font-size: clamp(2rem, 5vw, 4rem);
+            line-height: 0.9;
+            margin-bottom: 15px;
+        }
+
+        .detail-body .detail-author {
+            font-family: var(--font-mono);
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .detail-body .detail-subtitle {
+            font-family: var(--font-mono);
+            font-size: 16px;
+            line-height: 1.4;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        .detail-body .detail-content {
+            font-family: var(--font-mono);
+            font-size: 15px;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .detail-body .detail-content a {
+            color: var(--accent);
+            text-decoration: underline;
+            font-weight: bold;
+        }
+
         .log-overlay {
             position: fixed;
             top: 0;
@@ -318,6 +418,21 @@
             background-color: var(--accent);
         }
 
+        .log-copy-link {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--text);
+            opacity: 0.5;
+            cursor: pointer;
+            text-decoration: none;
+            border-bottom: 1px dashed var(--text);
+            transition: opacity 0.15s;
+        }
+
+        .log-copy-link:hover {
+            opacity: 1;
+        }
+
 
 @media (max-width: 768px) {
             body {
@@ -372,6 +487,9 @@
 
             .log-overlay { padding: 30px 20px; }
             .log-item { flex-direction: column; align-items: flex-start; gap: 15px; }
+            .detail-overlay { padding: 30px 20px; }
+            .detail-body h2 { font-size: 2rem; }
+            .detail-body .detail-content { font-size: 14px; }
         }
     </style>
 </head>
@@ -408,6 +526,14 @@
     <span><b>ISSN: 3137-7912</b> // MATARÓ (CATALONIA) // CONTINUOUS PUBLICATION </span>
     <a href="#" id="log-link">LOG OF ENTRIES ↗</a>
 </div>
+
+    <div id="detail-overlay" class="detail-overlay">
+        <div class="detail-header">
+            <h2 class="detail-main-title"></h2>
+            <div id="detail-close" class="detail-close-btn">[BACK]</div>
+        </div>
+        <div id="detail-body" class="detail-body"></div>
+    </div>
 
     <div id="log-overlay" class="log-overlay">
         <div class="log-header">
@@ -585,6 +711,73 @@ link.addEventListener('click', (e) => {
     generateTextFile(positions[index]);
 });
 
+function setMeta(article) {
+    const baseUrl = 'https://ag0.surge.sh';
+    const url = article ? `${baseUrl}/?entry=${article.id}` : baseUrl;
+    const title = article ? `${article.title} — AVANT-GARDE ZERO` : 'AVANT-GARDE ZERO';
+    const desc = article ? (article.subtitle || 'Point zero of the new international avant-garde.') : 'Point zero of the new international avant-garde.';
+    const image = article && article.image ? article.image : '';
+
+    document.title = title;
+    document.querySelector('link[rel="canonical"]').setAttribute('href', url);
+
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    const ogDesc = document.querySelector('meta[property="og:description"]');
+    const ogUrl = document.querySelector('meta[property="og:url"]');
+    const ogImage = document.querySelector('meta[property="og:image"]');
+    const twTitle = document.querySelector('meta[name="twitter:title"]');
+    const twDesc = document.querySelector('meta[name="twitter:description"]');
+    const twImage = document.querySelector('meta[name="twitter:image"]');
+
+    if (ogTitle) ogTitle.setAttribute('content', title);
+    if (ogDesc) ogDesc.setAttribute('content', desc);
+    if (ogUrl) ogUrl.setAttribute('content', url);
+    if (ogImage) ogImage.setAttribute('content', image);
+    if (twTitle) twTitle.setAttribute('content', title);
+    if (twDesc) twDesc.setAttribute('content', desc);
+    if (twImage) twImage.setAttribute('content', image);
+}
+
+function showArticle(article) {
+    if (!article) return;
+
+    setMeta(article);
+
+    const overlay = document.getElementById('detail-overlay');
+    const headerTitle = overlay.querySelector('.detail-main-title');
+    const body = document.getElementById('detail-body');
+
+    headerTitle.textContent = article.title || 'UNTITLED';
+
+    let contentHtml = article.content || '';
+    const linkRegex = /(?:\[([^\]]+)\]\((https?:\/\/[^\s)]+)\))|(https?:\/\/[^\s]+)/g;
+    contentHtml = contentHtml.replace(linkRegex, function(match, text, markdownUrl, rawUrl) {
+        const href = rawUrl || markdownUrl;
+        const label = text || rawUrl;
+        return `<a href="${href}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+    });
+
+    body.innerHTML = `
+        <h2>${article.title || ''}</h2>
+        <div class="detail-author">${article.author ? `BY: ${article.author}` : ''}</div>
+        <div class="detail-subtitle">${article.subtitle || ''}</div>
+        ${article.image ? `<img src="${article.image}" alt="" style="max-width:100%;height:auto;margin-bottom:30px;border:2px solid var(--text);" />` : ''}
+        <div class="detail-content">${contentHtml}</div>
+    `;
+
+    overlay.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+
+    window.history.replaceState(null, '', `/?entry=${article.id}`);
+}
+
+function hideArticle() {
+    document.getElementById('detail-overlay').style.display = 'none';
+    document.body.style.overflow = '';
+    setMeta(null);
+    window.history.replaceState(null, '', '/');
+}
+
 logLink.addEventListener('click', (e) => {
     e.preventDefault();
     logOverlay.style.display = "flex";
@@ -592,6 +785,22 @@ logLink.addEventListener('click', (e) => {
 
 logClose.addEventListener('click', () => {
     logOverlay.style.display = "none";
+});
+
+document.getElementById('detail-close').addEventListener('click', hideArticle);
+
+document.getElementById('detail-overlay').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) hideArticle();
+});
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') hideArticle();
+});
+
+window.addEventListener('popstate', () => {
+    if (document.getElementById('detail-overlay').style.display === 'flex') {
+        hideArticle();
+    }
 });
 
 
@@ -602,17 +811,42 @@ function buildArchiveLog() {
         const item = document.createElement('div');
         item.className = 'log-item';
         
+        const articleUrl = `https://ag0.surge.sh/?entry=${article.id}`;
+        
         item.innerHTML = `
             <div class="log-item-info">
-                <span class="log-item-title">${article.title || "UNTITLED"}</span>
+                <span class="log-item-title" style="cursor:pointer;">${article.title || "UNTITLED"}</span>
                 <span class="log-item-author">${article.author ? `BY: ${article.author}` : "ANONYMOUS"}</span>
+                <span class="log-copy-link" data-url="${articleUrl}">[COPY LINK]</span>
             </div>
             <span class="log-download-trigger">READ FULL .txt ↗</span>
         `;
         
-   
+        item.querySelector('.log-item-title').addEventListener('click', () => {
+            logOverlay.style.display = 'none';
+            showArticle(article);
+        });
+        
         item.querySelector('.log-download-trigger').addEventListener('click', () => {
             generateTextFile(article);
+        });
+        
+        item.querySelector('.log-copy-link').addEventListener('click', async (e) => {
+            const url = e.currentTarget.getAttribute('data-url');
+            try {
+                await navigator.clipboard.writeText(url);
+                e.currentTarget.textContent = '[COPIED!]';
+                setTimeout(() => { e.currentTarget.textContent = '[COPY LINK]'; }, 2000);
+            } catch {
+                const textarea = document.createElement('textarea');
+                textarea.value = url;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                e.currentTarget.textContent = '[COPIED!]';
+                setTimeout(() => { e.currentTarget.textContent = '[COPY LINK]'; }, 2000);
+            }
         });
         
         logContentList.appendChild(item);
@@ -653,11 +887,9 @@ const urlParams = new URLSearchParams(window.location.search);
         const entryId = urlParams.get('entry');
         
         if (entryId) {
-
             const targetArticle = allPositions.find(p => String(p.id) === String(entryId));
             if (targetArticle) {
-
-                generateTextFile(targetArticle);
+                showArticle(targetArticle);
             }
         }
     })
