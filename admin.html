@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AG0 — Admin</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23000000'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Arial, sans-serif' font-size='22' font-weight='900' fill='%23E1FF00'%3E%C3%98%3C/text%3E%3C/svg%3E">
+    <style>
+        :root {
+            --bg: #E1FF00;
+            --text: #000000;
+            --accent: #FF0000;
+            --font-mono: 'Courier New', Courier, monospace;
+            --font-brutal: 'Arial Black', Impact, sans-serif;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font-mono);
+            padding: 40px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-family: var(--font-brutal);
+            text-transform: uppercase;
+            font-size: 2.5rem;
+            line-height: 0.9;
+            margin-bottom: 30px;
+        }
+        h2 {
+            font-family: var(--font-brutal);
+            text-transform: uppercase;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            margin-top: 30px;
+        }
+        .gate {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+            margin-top: 40px;
+        }
+        .gate input {
+            font-family: var(--font-mono);
+            font-size: 16px;
+            padding: 8px 12px;
+            background: var(--bg);
+            border: 2px solid var(--text);
+            color: var(--text);
+            width: 250px;
+        }
+        .gate button, .btn {
+            font-family: var(--font-mono);
+            font-size: 14px;
+            font-weight: 700;
+            padding: 8px 16px;
+            background: var(--text);
+            color: var(--bg);
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .gate button:hover, .btn:hover {
+            background: var(--accent);
+            color: #fff;
+        }
+        .token-bar {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+            padding: 15px;
+            border: 2px dashed var(--text);
+        }
+        .token-bar input {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            padding: 6px 10px;
+            background: var(--bg);
+            border: 2px solid var(--text);
+            color: var(--text);
+            flex: 1;
+            min-width: 200px;
+        }
+        .article-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            margin-bottom: 30px;
+        }
+        .article-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 2px dashed var(--text);
+            gap: 15px;
+        }
+        .article-row-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .article-row-title {
+            font-family: var(--font-brutal);
+            text-transform: uppercase;
+            font-size: 1rem;
+            line-height: 1;
+        }
+        .article-row-meta {
+            font-size: 11px;
+            opacity: 0.5;
+            font-weight: 700;
+        }
+        .article-row-actions {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .article-row-actions button {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            background: var(--text);
+            color: var(--bg);
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        .article-row-actions button:hover {
+            background: var(--accent);
+            color: #fff;
+        }
+        .article-row-actions .del {
+            background: var(--accent);
+            color: #fff;
+        }
+        .article-row-actions .del:hover {
+            background: #000;
+            color: var(--bg);
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 20px;
+            border: 2px solid var(--text);
+            margin-bottom: 30px;
+        }
+        form label {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        form input, form textarea {
+            font-family: var(--font-mono);
+            font-size: 14px;
+            padding: 8px 10px;
+            background: var(--bg);
+            border: 2px solid var(--text);
+            color: var(--text);
+        }
+        form textarea { min-height: 200px; resize: vertical; }
+        .form-row { display: flex; flex-direction: column; gap: 4px; }
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        .status {
+            margin-top: 15px;
+            padding: 10px;
+            font-weight: 700;
+            font-size: 13px;
+        }
+        .status.ok { background: var(--text); color: var(--bg); }
+        .status.err { background: var(--accent); color: #fff; }
+        .hidden { display: none !important; }
+        a.back {
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text);
+            text-transform: uppercase;
+            text-decoration: none;
+            border-bottom: 2px solid var(--text);
+            padding-bottom: 2px;
+        }
+        a.back:hover {
+            color: var(--bg);
+            background: var(--text);
+        }
+        @media (max-width: 600px) {
+            body { padding: 20px; }
+            h1 { font-size: 1.8rem; }
+            .article-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+            .token-bar { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="back">← BACK TO AG0</a>
+    <h1>AG0 // ADMIN</h1>
+
+    <div id="gate">
+        <p style="margin-bottom:10px;font-size:14px;">Enter the admin passphrase:</p>
+        <div class="gate">
+            <input type="password" id="pass-input" placeholder="passphrase" autocomplete="off">
+            <button id="pass-btn">ENTER</button>
+        </div>
+    </div>
+
+    <div id="admin-panel" class="hidden">
+
+        <div class="token-bar">
+            <span style="font-size:12px;font-weight:700;text-transform:uppercase;">GitHub Token</span>
+            <input type="password" id="gh-token" placeholder="ghp_xxx... (or leave empty to download JSON)" autocomplete="off">
+            <button class="btn" id="test-token">Test</button>
+        </div>
+
+        <h2>All Positions</h2>
+        <div id="article-list" class="article-list"></div>
+
+        <button class="btn" id="show-add-form">+ NEW POSITION</button>
+
+        <div id="edit-form" class="hidden">
+            <h2 id="form-title">New Position</h2>
+            <form id="article-form" autocomplete="off">
+                <input type="hidden" id="f-id" value="">
+                <div class="form-row">
+                    <label for="f-title">Title</label>
+                    <input type="text" id="f-title" required>
+                </div>
+                <div class="form-row">
+                    <label for="f-author">Author</label>
+                    <input type="text" id="f-author" required>
+                </div>
+                <div class="form-row">
+                    <label for="f-subtitle">Subtitle</label>
+                    <input type="text" id="f-subtitle">
+                </div>
+                <div class="form-row">
+                    <label for="f-issue">Coordinate (e.g. 0.2)</label>
+                    <input type="text" id="f-issue" placeholder="0.2">
+                </div>
+                <div class="form-row">
+                    <label for="f-image">Image URL</label>
+                    <input type="url" id="f-image" placeholder="https://...">
+                </div>
+                <div class="form-row">
+                    <label for="f-references">References (comma-separated IDs, e.g. 1,2)</label>
+                    <input type="text" id="f-references" placeholder="1,2">
+                </div>
+                <div class="form-row">
+                    <label for="f-content">Content</label>
+                    <textarea id="f-content" required></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn" id="save-btn">Save</button>
+                    <button type="button" class="btn" id="cancel-btn" style="background:transparent;color:var(--text);border:2px solid var(--text);">Cancel</button>
+                </div>
+            </form>
+        </div>
+
+        <div id="status" class="status hidden"></div>
+    </div>
+
+<script>
+const PASS = 'ag0admin2026';
+let articles = [];
+let editingId = null;
+
+const gate = document.getElementById('gate');
+const panel = document.getElementById('admin-panel');
+const passInput = document.getElementById('pass-input');
+const passBtn = document.getElementById('pass-btn');
+const ghToken = document.getElementById('gh-token');
+const testTokenBtn = document.getElementById('test-token');
+const listEl = document.getElementById('article-list');
+const showAddBtn = document.getElementById('show-add-form');
+const editForm = document.getElementById('edit-form');
+const formTitle = document.getElementById('form-title');
+const articleForm = document.getElementById('article-form');
+const cancelBtn = document.getElementById('cancel-btn');
+const statusEl = document.getElementById('status');
+const fId = document.getElementById('f-id');
+const fTitle = document.getElementById('f-title');
+const fAuthor = document.getElementById('f-author');
+const fSubtitle = document.getElementById('f-subtitle');
+const fIssue = document.getElementById('f-issue');
+const fImage = document.getElementById('f-image');
+const fReferences = document.getElementById('f-references');
+const fContent = document.getElementById('f-content');
+
+function setStatus(msg, type) {
+    statusEl.textContent = msg;
+    statusEl.className = 'status ' + type;
+    statusEl.classList.remove('hidden');
+}
+
+function loadArticles() {
+    fetch('articles.json?' + Date.now())
+        .then(r => r.json())
+        .then(data => {
+            articles = data.sort((a, b) => Number(b.id) - Number(a.id));
+            renderList();
+        })
+        .catch(() => {
+            setStatus('Failed to load articles.json', 'err');
+        });
+}
+
+function renderList() {
+    if (!articles.length) {
+        listEl.innerHTML = '<p style="opacity:0.4;font-size:14px;">No positions yet.</p>';
+        return;
+    }
+    listEl.innerHTML = articles.map(a => {
+        const refs = a.references && a.references.length ? a.references.join(',') : '';
+        return `
+            <div class="article-row">
+                <div class="article-row-info">
+                    <span class="article-row-title">${a.title || 'UNTITLED'}</span>
+                    <span class="article-row-meta">${a.issue ? 'COORD ' + a.issue + ' // ' : ''}${a.author || 'ANONYMOUS'}${refs ? ' // REFS: ' + refs : ''}</span>
+                </div>
+                <div class="article-row-actions">
+                    <button onclick="editArticle('${a.id}')">EDIT</button>
+                    <button class="del" onclick="deleteArticle('${a.id}')">DELETE</button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function getNextId() {
+    if (!articles.length) return '1';
+    const maxId = Math.max(...articles.map(a => Number(a.id)));
+    return String(maxId + 1);
+}
+
+function editArticle(id) {
+    const a = articles.find(p => String(p.id) === String(id));
+    if (!a) return;
+    editingId = id;
+    formTitle.textContent = 'Edit Position';
+    fId.value = a.id;
+    fTitle.value = a.title || '';
+    fAuthor.value = a.author || '';
+    fSubtitle.value = a.subtitle || '';
+    fIssue.value = a.issue || '';
+    fImage.value = a.image || '';
+    fReferences.value = (a.references || []).join(',');
+    fContent.value = a.content || '';
+    editForm.classList.remove('hidden');
+    showAddBtn.textContent = '+ NEW POSITION';
+    window.scrollTo({ top: editForm.offsetTop - 20, behavior: 'smooth' });
+}
+
+function deleteArticle(id) {
+    if (!confirm('Delete position ' + id + '? This cannot be undone.')) return;
+    articles = articles.filter(a => String(a.id) !== String(id));
+    renderList();
+}
+
+showAddBtn.addEventListener('click', () => {
+    editingId = null;
+    formTitle.textContent = 'New Position';
+    articleForm.reset();
+    fId.value = '';
+    fIssue.value = '0.' + getNextId();
+    editForm.classList.remove('hidden');
+    showAddBtn.textContent = '+ NEW POSITION';
+    window.scrollTo({ top: editForm.offsetTop - 20, behavior: 'smooth' });
+});
+
+cancelBtn.addEventListener('click', () => {
+    editForm.classList.add('hidden');
+    showAddBtn.textContent = '+ NEW POSITION';
+});
+
+articleForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const refs = fReferences.value.trim()
+        ? fReferences.value.split(',').map(s => s.trim()).filter(Boolean)
+        : [];
+
+    const article = {
+        id: editingId || getNextId(),
+        issue: fIssue.value.trim() || undefined,
+        title: fTitle.value.trim(),
+        image: fImage.value.trim() || undefined,
+        author: fAuthor.value.trim(),
+        subtitle: fSubtitle.value.trim() || undefined,
+        references: refs.length ? refs : undefined,
+        content: fContent.value.trim()
+    };
+
+    if (editingId) {
+        const idx = articles.findIndex(a => String(a.id) === String(editingId));
+        if (idx !== -1) articles[idx] = article;
+    } else {
+        articles.push(article);
+        articles.sort((a, b) => Number(b.id) - Number(a.id));
+    }
+
+    editForm.classList.add('hidden');
+    showAddBtn.textContent = '+ NEW POSITION';
+    renderList();
+    saveToGitHub();
+});
+
+function buildJson() {
+    const sorted = [...articles].sort((a, b) => Number(a.id) - Number(b.id));
+    return JSON.stringify(sorted, null, 2);
+}
+
+function downloadJson() {
+    const blob = new Blob([buildJson()], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'articles.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    setStatus('articles.json downloaded. Replace the file and run: surge . --domain ag0.surge.sh', 'ok');
+}
+
+function saveToGitHub() {
+    const token = ghToken.value.trim();
+    if (!token) {
+        downloadJson();
+        return;
+    }
+
+    setStatus('Saving to GitHub...', 'ok');
+
+    const content = btoa(unescape(encodeURIComponent(buildJson())));
+    const repo = 'dadapoetry/avant-garde-zero';
+    const path = 'articles.json';
+    const url = `https://api.github.com/repos/${repo}/contents/${path}`;
+
+    fetch(url, {
+        headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' }
+    })
+    .then(r => r.json())
+    .then(data => {
+        const sha = data.sha;
+        return fetch(url, {
+            method: 'PUT',
+            headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                message: 'Update articles.json via admin',
+                content: content,
+                sha: sha
+            })
+        });
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.content) {
+            setStatus('Saved to GitHub! The site will auto-deploy in ~1 minute.', 'ok');
+        } else {
+            setStatus('GitHub error: ' + (data.message || 'unknown'), 'err');
+        }
+    })
+    .catch(err => {
+        setStatus('Error: ' + err.message, 'err');
+    });
+}
+
+testTokenBtn.addEventListener('click', () => {
+    const token = ghToken.value.trim();
+    if (!token) { setStatus('Enter a token first', 'err'); return; }
+    setStatus('Testing token...', 'ok');
+    fetch('https://api.github.com/user', {
+        headers: { 'Authorization': 'token ' + token }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.login) {
+            setStatus('Token valid — logged in as ' + data.login, 'ok');
+        } else {
+            setStatus('Token invalid: ' + (data.message || 'unknown error'), 'err');
+        }
+    })
+    .catch(err => setStatus('Error: ' + err.message, 'err'));
+});
+
+passBtn.addEventListener('click', () => {
+    if (passInput.value === PASS) {
+        gate.classList.add('hidden');
+        panel.classList.remove('hidden');
+        const saved = localStorage.getItem('ag0_gh_token');
+        if (saved) ghToken.value = saved;
+        loadArticles();
+    } else {
+        alert('Wrong passphrase');
+    }
+});
+
+passInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') passBtn.click();
+});
+
+ghToken.addEventListener('input', () => {
+    localStorage.setItem('ag0_gh_token', ghToken.value);
+});
+
+</script>
+</body>
+</html>
