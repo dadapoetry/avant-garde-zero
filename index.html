@@ -15,6 +15,7 @@
     <meta name="twitter:description" content="Point zero of the new international avant-garde.">
     <meta name="twitter:image" content="">
     <link rel="canonical" href="https://ag0.surge.sh">
+    <link rel="alternate" type="application/rss+xml" title="AVANT-GARDE ZERO — Positions" href="https://ag0.surge.sh/feed.xml">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23000000'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Arial, sans-serif' font-size='22' font-weight='900' fill='%23E1FF00'%3E%C3%98%3C/text%3E%3C/svg%3E">
     <style>
 
@@ -433,6 +434,89 @@
             opacity: 1;
         }
 
+        .header-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .header-link {
+            font-family: var(--font-mono);
+            font-size: clamp(11px, 1.5vw, 13px);
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border: 2px solid var(--text);
+            padding: 4px 10px;
+            transition: all 0.15s ease;
+        }
+
+        .header-link:hover {
+            background-color: var(--text);
+            color: var(--bg);
+        }
+
+        .display-coordinate {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            opacity: 0.4;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .submit-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            padding: 8vh 60px;
+            overflow-y: auto;
+            text-align: left;
+        }
+
+        .detail-references {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px dashed var(--text);
+        }
+
+        .detail-references h3 {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            opacity: 0.4;
+            margin-bottom: 15px;
+        }
+
+        .detail-references a {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 8px;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 2px;
+            width: fit-content;
+        }
+
+        .detail-references a:hover {
+            color: var(--bg);
+            background-color: var(--accent);
+        }
 
 @media (max-width: 768px) {
             body {
@@ -490,6 +574,8 @@
             .detail-overlay { padding: 30px 20px; }
             .detail-body h2 { font-size: 2rem; }
             .detail-body .detail-content { font-size: 14px; }
+            .submit-overlay { padding: 30px 20px; }
+            .header-actions { gap: 10px; }
         }
     </style>
 </head>
@@ -497,7 +583,10 @@
 
     <header class="header-zero">
         <h1 class="main-title">avant-garde zero</h1>
-        <a href="mailto:avantgardezero@proton.me" class="contact-email">avantgardezero@proton.me</a>
+        <div class="header-actions">
+            <a href="mailto:avantgardezero@proton.me" class="contact-email">submit → avantgardezero@proton.me</a>
+            <a href="#" id="submit-link" class="header-link">[GUIDELINES]</a>
+        </div>
     </header>
 
     <div class="showcase-wrapper">
@@ -511,6 +600,7 @@
                 </div>
 
                 <div class="content-block">
+                    <div id="r-coordinate" class="display-coordinate"></div>
                     <h2 id="r-title" class="display-title">...</h2>
                     <h4 id="r-author" class="display-author">...</h4>
                     <p id="r-subtitle" class="display-subtitle">...</p>
@@ -524,7 +614,9 @@
     </div>
 <div class="side-footer">
     <span><b>ISSN: 3137-7912</b> // MATARÓ (CATALONIA) // CONTINUOUS PUBLICATION </span>
-    <a href="#" id="log-link">LOG OF ENTRIES ↗</a>
+    <a href="#" id="manifesto-link">MANIFESTO ↗</a>
+    <a href="#" id="log-link">ALL_ENTRIES.log ↗</a>
+    <a href="/feed.xml" target="_blank" id="rss-link">RSS ↗</a>
 </div>
 
     <div id="detail-overlay" class="detail-overlay">
@@ -542,6 +634,27 @@
         </div>
         <div id="log-content-list" class="log-list">
             </div>
+    </div>
+
+    <div id="submit-overlay" class="submit-overlay">
+        <div class="log-header">
+            <h2 class="log-main-title">SUBMIT A POSITION</h2>
+            <div id="submit-close" class="log-close-btn">[CLOSE]</div>
+        </div>
+        <div class="log-list">
+            <div class="log-item" style="flex-direction:column;align-items:flex-start;border-bottom:none;">
+                <p style="font-family:var(--font-mono);font-size:15px;line-height:1.7;margin-bottom:20px;">
+                    AG0 publishes theoretical texts, manifestos, poetic statements, and critical positions that articulate the need for a new international avant-garde. We are looking for contributions that take a position — that argue, provoke, and open a front.
+                </p>
+                <p style="font-family:var(--font-mono);font-size:15px;line-height:1.7;margin-bottom:30px;">
+                    Submissions in any language, up to ~5000 words, with or without images. Send your position as plain text to:
+                </p>
+                <a href="mailto:avantgardezero@proton.me?subject=POSITION%20SUBMISSION" class="contact-email" style="margin-bottom:30px;">submit → avantgardezero@proton.me</a>
+                <p style="font-family:var(--font-mono);font-size:13px;line-height:1.6;opacity:0.6;">
+                    Include a short bio (2-3 sentences). Simultaneous submissions accepted. AG0 is a non-profit, non-commercial publication. All rights remain with the author.
+                </p>
+            </div>
+        </div>
     </div>
 
 <script>
@@ -566,6 +679,12 @@ const logLink = document.getElementById('log-link');
 const logOverlay = document.getElementById('log-overlay');
 const logClose = document.getElementById('log-close');
 const logContentList = document.getElementById('log-content-list');
+
+const manifestoLink = document.getElementById('manifesto-link');
+const submitLink = document.getElementById('submit-link');
+const submitOverlay = document.getElementById('submit-overlay');
+const submitClose = document.getElementById('submit-close');
+const coordinateEl = document.getElementById('r-coordinate');
 
 box.classList.add("loading");
 title.textContent = "LOADING...";
@@ -592,6 +711,7 @@ function loadData(idx) {
         title.textContent = item.title || "";
         author.textContent = item.author ? `BY: ${item.author}` : "";
         subtitle.textContent = item.subtitle || "";
+        coordinateEl.textContent = item.issue ? `COORDINATE ${item.issue}` : '';
 
         if (item.image) {
             img.src = item.image;
@@ -645,7 +765,7 @@ https://ag0.surge.sh
 
 -------------------------------------------------
 
-${article.title || ""}
+${article.issue ? `Coordinate: ${article.issue}\n\n` : ''}${article.title || ""}
 BY: ${article.author || ""}
 
 ${article.subtitle || ""}
@@ -660,48 +780,7 @@ Rights of the article: ${article.author || ""}
       
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~`;
 
-
-    const linkRegex = /(?:\[([^\]]+)\]\((https?:\/\/[^\s)]+)\))|(https?:\/\/[^\s]+)/g;
-    
-    textContent = textContent.replace(linkRegex, function(match, text, markdownUrl, rawUrl) {
-        if (rawUrl) {
-            
-            return `<a href="${rawUrl}" target="_blank" style="color: #FF0000; text-decoration: underline; font-weight: bold;">${rawUrl}</a>`;
-        } else {
-           
-            return `<a href="${markdownUrl}" target="_blank" style="color: #FF0000; text-decoration: underline; font-weight: bold;">${text}</a>`;
-        }
-    });
-
- 
-    const htmlWrapper = `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>${article.title || "TXT_VIEW"}</title>
-        <meta name="description" content="${article.subtitle || "TXT_VIEW"}">
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23000000'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Arial, sans-serif' font-size='22' font-weight='900' fill='%23E1FF00'%3E%C3%98%3C/text%3E%3C/svg%3E">
-
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>
-            body {
-                background-color: #ffffff;
-                color: #000000;
-                padding: 20px;
-                margin: 0;
-                white-space: pre-wrap;
-                word-wrap: break-word;
-            }
-            @media (prefers-color-scheme: dark) {
-                body { background-color: #1c1c1c; color: #e0e0e0; }
-            }
-        </style>
-    </head>
-    <body>${textContent}</body>
-    </html>`;
-
-    const blob = new Blob([htmlWrapper], { type: "text/html;charset=utf-8" });
+    const blob = new Blob([textContent], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     window.open(url, "_blank");
 }
@@ -757,13 +836,35 @@ function showArticle(article) {
         return `<a href="${href}" target="_blank" rel="noopener noreferrer">${label}</a>`;
     });
 
+    let referencesHtml = '';
+    if (article.references && article.references.length) {
+        const refs = article.references.map(refId => {
+            const ref = allPositions.find(p => String(p.id) === String(refId));
+            return ref ? `<a href="#" data-entry="${ref.id}">→ ${ref.title}</a>` : '';
+        }).filter(Boolean).join('');
+        if (refs) {
+            referencesHtml = `<div class="detail-references"><h3>RELATED POSITIONS</h3>${refs}</div>`;
+        }
+    }
+
     body.innerHTML = `
+        ${article.issue ? `<div class="display-coordinate" style="margin-bottom:10px;">COORDINATE ${article.issue}</div>` : ''}
         <h2>${article.title || ''}</h2>
         <div class="detail-author">${article.author ? `BY: ${article.author}` : ''}</div>
         <div class="detail-subtitle">${article.subtitle || ''}</div>
         ${article.image ? `<img src="${article.image}" alt="" style="max-width:100%;height:auto;margin-bottom:30px;border:2px solid var(--text);" />` : ''}
         <div class="detail-content">${contentHtml}</div>
+        ${referencesHtml}
     `;
+
+    body.querySelectorAll('[data-entry]').forEach(el => {
+        el.addEventListener('click', (e) => {
+            e.preventDefault();
+            const id = e.currentTarget.getAttribute('data-entry');
+            const ref = allPositions.find(p => String(p.id) === id);
+            if (ref) showArticle(ref);
+        });
+    });
 
     overlay.style.display = 'flex';
     document.body.style.overflow = 'hidden';
@@ -777,6 +878,25 @@ function hideArticle() {
     setMeta(null);
     window.history.replaceState(null, '', '/');
 }
+
+manifestoLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    const manifesto = allPositions.find(p => p.id === '2' || p.title === 'A CALL FOR A POINT ZERO');
+    if (manifesto) showArticle(manifesto);
+});
+
+submitLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    submitOverlay.style.display = "flex";
+});
+
+submitClose.addEventListener('click', () => {
+    submitOverlay.style.display = "none";
+});
+
+submitOverlay.addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) submitOverlay.style.display = "none";
+});
 
 logLink.addEventListener('click', (e) => {
     e.preventDefault();
@@ -882,6 +1002,12 @@ fetch(SHEET_URL)
         
 
         buildArchiveLog();
+
+        const hasVisited = localStorage.getItem('ag0_visited');
+        if (!hasVisited && !window.location.search.includes('entry=')) {
+            logOverlay.style.display = 'flex';
+            localStorage.setItem('ag0_visited', 'true');
+        }
 
 const urlParams = new URLSearchParams(window.location.search);
         const entryId = urlParams.get('entry');
