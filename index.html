@@ -253,6 +253,7 @@
             border-bottom: 4px solid var(--text);
             padding-bottom: 20px;
             margin-bottom: 40px;
+            gap: 10px;
         }
 
         .detail-main-title {
@@ -262,18 +263,26 @@
             line-height: 0.9;
         }
 
-        .detail-close-btn {
+        .detail-header-actions {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .detail-header-btn {
             font-family: var(--font-mono);
-            font-size: 14px;
+            font-size: 12px;
             font-weight: bold;
             cursor: pointer;
             background-color: var(--text);
             color: var(--bg);
-            padding: 6px 14px;
+            padding: 6px 12px;
             text-transform: uppercase;
+            border: none;
+            white-space: nowrap;
         }
 
-        .detail-close-btn:hover {
+        .detail-header-btn:hover {
             background-color: var(--accent);
             color: #FFFFFF;
         }
@@ -645,7 +654,10 @@
     <div id="detail-overlay" class="detail-overlay">
         <div class="detail-header">
             <h2 class="detail-main-title"></h2>
-            <div id="detail-close" class="detail-close-btn">[BACK]</div>
+            <div class="detail-header-actions">
+                <div id="detail-cite" class="detail-header-btn">[CITE]</div>
+                <div id="detail-close" class="detail-header-btn">[BACK]</div>
+            </div>
         </div>
         <div id="detail-body" class="detail-body"></div>
     </div>
@@ -931,6 +943,30 @@ logClose.addEventListener('click', () => {
 });
 
 document.getElementById('detail-close').addEventListener('click', hideArticle);
+
+document.getElementById('detail-cite').addEventListener('click', () => {
+    const overlay = document.getElementById('detail-overlay');
+    const id = new URLSearchParams(window.location.search).get('entry');
+    if (!id) return;
+    const article = allPositions.find(p => String(p.id) === id);
+    if (!article) return;
+    const author = article.author || 'ANONYMOUS';
+    const title = article.title || 'UNTITLED';
+    const coord = article.issue ? `, no. ${article.issue}` : '';
+    const year = article.date ? ` (${article.date})` : '';
+    const citation = `${author}. "${title}." AG0${coord}${year}.`;
+    navigator.clipboard.writeText(citation).then(() => {
+        const btn = document.getElementById('detail-cite');
+        const orig = btn.textContent;
+        btn.textContent = '[COPIED!]';
+        setTimeout(() => { btn.textContent = orig; }, 2000);
+    }).catch(() => {
+        const btn = document.getElementById('detail-cite');
+        const orig = btn.textContent;
+        btn.textContent = '[COPY ERR]';
+        setTimeout(() => { btn.textContent = orig; }, 2000);
+    });
+});
 
 document.getElementById('detail-overlay').addEventListener('click', (e) => {
     if (e.target === e.currentTarget) hideArticle();
